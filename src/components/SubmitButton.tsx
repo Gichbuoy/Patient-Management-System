@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 interface ButtonProps {
     isLoading: boolean,
-    className: string,
+    className?: string,
     children: React.ReactNode,
 }
 
@@ -23,10 +23,10 @@ const SubmitButton = ({ isLoading, className, children}: ButtonProps) => {
                 Loading...
 
             </div>
-        ): children}
+        ): (children)}
 
     </Button>
-  )
-}
+  );
+};
 
 export default SubmitButton

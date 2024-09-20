@@ -39,3 +39,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Backend
 - Appwrite - open source backend as a service tool, makes work easier.
 Add authentication Databases, functions, Storage, and Messaging using frameworks of yout choice
+
+API has following permissions: auth, db, functions, storage, messaging
