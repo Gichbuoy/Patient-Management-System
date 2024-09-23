@@ -35,7 +35,6 @@ export const IdentificationTypes = [
   "Passport",
   "Resident Alien Card (Green Card)",
   "Social Security Card",
-  "State ID Card",
   "Student ID Card",
   "Voter ID Card",
 ];
@@ -43,7 +42,7 @@ export const IdentificationTypes = [
 export const Doctors = [
   {
     image: "/assets/images/dr-green.png",
-    name: "John Green",
+    name: "Alex Gabe",
   },
   {
     image: "/assets/images/dr-cameron.png",
@@ -51,11 +50,11 @@ export const Doctors = [
   },
   {
     image: "/assets/images/dr-livingston.png",
-    name: "David Livingston",
+    name: "TonyTony Chopper",
   },
   {
     image: "/assets/images/dr-peter.png",
-    name: "Evan Peter",
+    name: "Trafalgar D. Law",
   },
   {
     image: "/assets/images/dr-powell.png",
@@ -63,7 +62,7 @@ export const Doctors = [
   },
   {
     image: "/assets/images/dr-remirez.png",
-    name: "Alex Ramirez",
+    name: "Alex Uchiha",
   },
   {
     image: "/assets/images/dr-lee.png",

@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Button } from '@/components/ui/button'
 import { Form, FormControl } from "@/components/ui/form"
 import CustomFormField from "../CustomFormField"
 import SubmitButton from "../SubmitButton"
@@ -13,10 +12,11 @@ import { useRouter } from "next/navigation"
 import { createUser } from "@/lib/actions/patient.actions"
 import { FormFieldType } from "./PatientForm"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Doctors, GenderOptions } from "../../../constants"
+import { Doctors, GenderOptions, IdentificationTypes } from "../../../constants"
 import { Label } from "../ui/label"
 import { SelectItem } from "../ui/select"
 import Image from "next/image"
+import FileUploader from "../FileUploader"
 
 
  
@@ -111,7 +111,7 @@ const RegisterForm= ({ user }: { user: User }) => {
             />
 
             <CustomFormField
-                fieldType={FormFieldType.SKELETON}
+                fieldType={FormFieldType.SKELETON} // skeleton type allows me to pass anything I want
                 control={form.control}
                 name="gender"
                 label="Gender"
@@ -158,7 +158,7 @@ const RegisterForm= ({ user }: { user: User }) => {
                 control={form.control}
                 name="emergencyContactName"
                 label="Emergency contact name"
-                placeholder="Duardian's name"
+                placeholder="Guardian's name"
             
             />
 
@@ -201,18 +201,106 @@ const RegisterForm= ({ user }: { user: User }) => {
 
               </SelectItem>
             ))}
-
-            </CustomFormField>
-
-          
-              
-              
-            
+          </CustomFormField>    
 
 
-        <div className="flex flex-col gap-6 xl:flex-row"></div>
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="insuranceProvider"
+            label="Insurance provider"
+            placeholder="APA Insurance"
+          />
 
-    
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="insurancePolicyNumber"
+            label="Insurance policy number"
+            placeholder="ABC123456789"
+          />
+        </div>
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="allergies"
+            label="Allergies (if any)"
+            placeholder="Penicilin, Peanuts, Pollen"
+          />
+
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="currentMedication"
+            label="Currrent medication (if any)"
+            placeholder="Ibuprofen 200mg, Paracetamol 500mg"
+          />
+        </div>
+
+
+        <div className="flex flex-col gap-6 xl:flex-row">
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="familyMedicalHistory"
+            label="Family medical history"
+            placeholder="Alzheimer's disease, Asthma and allergies..."
+          />
+
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="pastMedicalHistory"
+            label="Past medical history"
+            placeholder="asthma, diabetes, depression, anxiety, high blood pressure...."
+          />
+        </div>
+
+
+        <section className="space-y-6">
+            <div className="mb-9 space-y-1">
+                <h2 className="sub-header">Identification and Verification</h2>
+            </div>
+        </section>
+
+        <CustomFormField
+          fieldType={FormFieldType.SELECT}
+          control={form.control}
+          name="identificationType"
+          label="Identification type"
+          placeholder="Select an identification type"
+        >
+
+          {IdentificationTypes.map((type) => ( // map an array of IdentificationTypes stored in constants dir.
+            <SelectItem key={type} value={type}>
+              {type}
+            </SelectItem>
+          ))}
+        </CustomFormField>
+
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="identificationNumber"
+          label="Identification number"
+          placeholder="123456789"
+        />
+
+
+        <CustomFormField
+          fieldType={FormFieldType.SKELETON} // skeleton type allows me to pass anything I want
+          control={form.control}
+          name="identificationDocument"
+          label="Image of Identification Document (scanned)"
+          renderSkeleton={(field) => (
+            <FormControl>
+              <FileUploader/>
+            </FormControl>
+          )}
+        />
       
       <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
