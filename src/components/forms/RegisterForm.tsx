@@ -3,20 +3,21 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Form, FormControl } from "@/components/ui/form"
+import { Form, FormControl, useFormField } from "@/components/ui/form"
 import CustomFormField from "../CustomFormField"
 import SubmitButton from "../SubmitButton"
 import { useState } from "react"
-import { UserFormValidation } from "@/lib/validation"
+import { PatientFormValidation, UserFormValidation } from "@/lib/validation"
 import { useRouter } from "next/navigation"
-import { createUser } from "@/lib/actions/patient.actions"
+import { createUser, registerPatient } from "@/lib/actions/patient.actions"
 import { FormFieldType } from "./PatientForm"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { Doctors, GenderOptions, IdentificationTypes } from "../../../constants"
+import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from "../../../constants"
 import { Label } from "../ui/label"
 import { SelectItem } from "../ui/select"
 import Image from "next/image"
 import FileUploader from "../FileUploader"
+import { register } from "module"
 
 
  
@@ -26,9 +27,10 @@ const RegisterForm= ({ user }: { user: User }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
   // 1. Define your form.
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
     defaultValues: {
+      ...PatientFormDefaultValues,
       name: "",
       email: "",
       phone: "",
@@ -36,21 +38,34 @@ const RegisterForm= ({ user }: { user: User }) => {
   })
  
   // 2. Define a submit handler.
-  async function onSubmit({ name, email, phone}: z.infer<typeof UserFormValidation>) {
+  async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
     setIsLoading(true);
 
-    try {
-      const userData = {
-        name,
-        email,
-        phone
-      };
+    let formData;
 
-      const user = await createUser(userData);
+    if(values.identificationDocument && values.identificationDocument.length > 0) {
+      const blobFile = new Blob([values.identificationDocument[0]], {  // blob is a special version of the file which a browser can read
+        type: values.identificationDocument[0].type,
+      })  
+      
+      formData = new FormData();
+      formData.append('blobFile', blobFile);
+      formData.append('fileName', values.identificationDocument[0].name);
+    }
 
-      if(user) {
-        router.push(`/patients/${user.$id}/register`);
-      } 
+    try { // form data in a way that appwrite can receive it
+      const patientData = {
+        ...values,
+        userId: user.$id,
+        birthDate: new Date(values.birthDate),
+        IdentificationDocument: formData,
+      }
+
+      // @ts-ignore
+      const patient = await registerPatient(patientData);
+
+      if(patient) router.push(`/patients/${user.$id}/new-appointment`)
+     
     }catch (error){
       console.log(error);
     }
@@ -297,11 +312,37 @@ const RegisterForm= ({ user }: { user: User }) => {
           label="Image of Identification Document (scanned)"
           renderSkeleton={(field) => (
             <FormControl>
-              <FileUploader/>
+              <FileUploader files={field.value} onChange={field.onChange}/>
             </FormControl>
           )}
         />
-      
+
+        
+        <section className="space-y-6">
+            <div className="mb-9 space-y-1">
+              <h2 className="sub-header">Consent and Privacy</h2>
+            </div>
+        </section>
+
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="treatmentConsent"
+          label="I consent to treatment"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="disclosureConsent"
+          label="I consent to disclosure of information"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.CHECKBOX}
+          control={form.control}
+          name="privacyConsent"
+          label="I consent to privacy policy"
+        />
+
       <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
