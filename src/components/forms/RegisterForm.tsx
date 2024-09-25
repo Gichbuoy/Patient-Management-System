@@ -50,7 +50,7 @@ const RegisterForm= ({ user }: { user: User }) => {
       
       formData = new FormData();
       formData.append('blobFile', blobFile);
-      formData.append('fileName', values.identificationDocument[0].name);
+      formData.append('fileName', values.identificationDocument[0].name)
     }
 
     try { // form data in a way that appwrite can receive it
@@ -58,18 +58,21 @@ const RegisterForm= ({ user }: { user: User }) => {
         ...values,
         userId: user.$id,
         birthDate: new Date(values.birthDate),
-        IdentificationDocument: formData,
-      }
+        identificationDocument: formData,
+      }      
 
       // @ts-ignore
       const patient = await registerPatient(patientData);
 
-      if(patient) router.push(`/patients/${user.$id}/new-appointment`)
+      if (patient) {
+        router.push(`/patients/${user.$id}/new-appointment`);
+      }
      
-    }catch (error){
+    } catch (error){
       console.log(error);
     }
-  }
+    setIsLoading(false);
+  };
 
   return (
     <Form {...form}>

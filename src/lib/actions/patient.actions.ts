@@ -43,21 +43,17 @@ export const getUser = async (userId: string) => {
 export const registerPatient = async ({ identificationDocument, ...patient }:
     RegisterUserParams) => {
         try {
+            // Upload file ->
             let file;
-
             if(identificationDocument){
-                const inputFile = InputFile.fromBuffer(
+                const inputFile = identificationDocument && InputFile.fromBuffer(
                     identificationDocument?.get('blobFile') as Blob,
-                    identificationDocument?.get('fileName') as string,
-                )
-                file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile)
+                    identificationDocument?.get('fileName') as string
+                );
+                file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
             }
 
-            console.log({
-                identificationDocumentId: file?.$id || null,
-                identificationDocumentUrl: `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file?.$id}/view?project=${PROJECT_ID}`,
-            });
-            
+            // Create new patient document ->
             const newPatient = await databases.createDocument(
                 DATABASE_ID!,
                 PATIENT_COLLECTION_ID!,
