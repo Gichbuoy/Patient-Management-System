@@ -12,10 +12,19 @@ import { UserFormValidation } from "@/lib/validation"
 import { useRouter } from "next/navigation"
 import { createUser } from "@/lib/actions/patient.actions"
 import { FormFieldType } from "./PatientForm"
+import { Doctors } from "../../../constants"
+import { SelectItem } from "../ui/select"
+import Image from "next/image"
 
 
  
-const AppointmentForm= () => {
+const AppointmentForm= ({
+    userId, patientId, type
+    }: {
+        userId: string;
+        patientId: string;
+        type: "create" | "cancel";
+    }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
   // 1. Define your form.
@@ -58,34 +67,35 @@ const AppointmentForm= () => {
             <p className="text-dark-700">Request new appointment in 10 seconds!</p>
         </section>
 
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="name"
-          label="Full name"
-          placeholder="Your Name"
-          iconSrc="/assets/icons/user.svg"
-          iconAlt="user"
-        />
+        {type !== "cancel" && (
+            <>
+            <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={form.control}
+                name="primaryPhysician"
+                label="Primary Physician"
+                placeholder="Select a Doctor"
+            >
 
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="email"
-          label="Email"
-          placeholder="youremail@gmail.com"
-          iconSrc="/assets/icons/email.svg"
-          iconAlt="emailaddress"
-        />
+                {Doctors.map((doctor) => ( // map an array of doctors stores in constants dir.
+                    <SelectItem key={doctor.name} value={doctor.name}>
+                    <div className="flex cursor-pointer items-center gap-2">
+                    <Image
+                        src={doctor.image}
+                        width={32}
+                        height={32}
+                        alt={doctor.name}
+                        className="rounded-full border border-dark-500"
+                    />
+                    <p>{doctor.name}</p>
+                    </div>
 
-        <CustomFormField
-          fieldType={FormFieldType.PHONE_INPUT}
-          control={form.control}
-          name="phone"
-          label="Phone Number"
-          placeholder="your number"
-          
-        />
+              </SelectItem>
+            ))}
+          </CustomFormField>    
+            </>
+        )}
+
       
       <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
