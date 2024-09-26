@@ -3,13 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Form, FormControl, useFormField } from "@/components/ui/form"
+import { Form, FormControl } from "@/components/ui/form"
 import CustomFormField from "../CustomFormField"
 import SubmitButton from "../SubmitButton"
 import { useState } from "react"
-import { PatientFormValidation, UserFormValidation } from "@/lib/validation"
+import { PatientFormValidation } from "@/lib/validation"
 import { useRouter } from "next/navigation"
-import { createUser, registerPatient } from "@/lib/actions/patient.actions"
+import { registerPatient } from "@/lib/actions/patient.actions"
 import { FormFieldType } from "./PatientForm"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from "../../../constants"
@@ -17,15 +17,14 @@ import { Label } from "../ui/label"
 import { SelectItem } from "../ui/select"
 import Image from "next/image"
 import FileUploader from "../FileUploader"
-import { register } from "module"
 
 
- 
 
  
-const RegisterForm= ({ user }: { user: User }) => {
-  const router = useRouter()
+const RegisterForm = ({ user }: { user: User }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof PatientFormValidation>>({
     resolver: zodResolver(PatientFormValidation),
@@ -43,36 +42,44 @@ const RegisterForm= ({ user }: { user: User }) => {
 
     let formData;
 
+     // Check if the user exists and has an ID before proceeding
+      if (!user?.$id) {
+        console.error("Error: Missing user ID.");
+        setIsLoading(false);  // Ensure loading state is stopped in case of error
+        return;  // Prevent submission if user ID is missing
+      }
+
     if(values.identificationDocument && values.identificationDocument.length > 0) {
       const blobFile = new Blob([values.identificationDocument[0]], {  // blob is a special version of the file which a browser can read
         type: values.identificationDocument[0].type,
-      })  
+      });
       
       formData = new FormData();
+      formData.append('userId', user.$id);
       formData.append('blobFile', blobFile);
-      formData.append('fileName', values.identificationDocument[0].name)
+      formData.append('fileName', values.identificationDocument[0].name);
     }
 
-    try { // form data in a way that appwrite can receive it
+    try {
       const patientData = {
         ...values,
-        userId: user.$id,
+        userId: user.$id, // 66ed3d3900313949c794 (patientID)
         birthDate: new Date(values.birthDate),
         identificationDocument: formData,
-      }      
+      }
 
       // @ts-ignore
       const patient = await registerPatient(patientData);
 
-      if (patient) {
+      if (patient) 
         router.push(`/patients/${user.$id}/new-appointment`);
-      }
-     
-    } catch (error){
+      
+    } catch (error) {
       console.log(error);
     }
+    
     setIsLoading(false);
-  };
+  }
 
   return (
     <Form {...form}>
