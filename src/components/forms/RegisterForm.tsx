@@ -49,24 +49,27 @@ const RegisterForm = ({ user }: { user: User }) => {
         return;  // Prevent submission if user ID is missing
       }
 
-    if(values.identificationDocument && values.identificationDocument.length > 0) {
-      const blobFile = new Blob([values.identificationDocument[0]], {  // blob is a special version of the file which a browser can read
-        type: values.identificationDocument[0].type,
-      });
+    
       
-      formData = new FormData();
-      formData.append('userId', user.$id);
-      formData.append('blobFile', blobFile);
-      formData.append('fileName', values.identificationDocument[0].name);
-    }
 
     try {
       const patientData = {
         ...values,
-        userId: user.$id, // 66ed3d3900313949c794 (patientID)
+        userId: user ?.$id, // 66ed3d3900313949c794 (patientID)
         birthDate: new Date(values.birthDate),
-        identificationDocument: formData,
       }
+
+      if(values.identificationDocument && values.identificationDocument.length > 0) {
+        const blobFile = new Blob([values.identificationDocument[0]], {  // blob is a special version of the file which a browser can read
+          type: values.identificationDocument[0].type,
+        });
+
+        formData = new FormData();
+        formData.append('userId', user.$id);
+        formData.append('blobFile', blobFile);
+        formData.append('fileName', values.identificationDocument[0].name);
+    }
+        
 
       // @ts-ignore
       const patient = await registerPatient(patientData);
