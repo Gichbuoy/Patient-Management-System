@@ -23,7 +23,7 @@ const AppointmentForm= ({
     }: {
         userId: string;
         patientId: string;
-        type: "create" | "cancel";
+        type: "create" | "cancel" | "schedule";
     }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +57,22 @@ const AppointmentForm= ({
       console.log(error);
     }
     setIsLoading(false);
+  }
+
+  // custom label
+  let buttonLabel;
+
+  switch (type) {
+    case 'cancel':
+      buttonLabel = 'Cancel Appointment';
+      break;
+    case 'create':
+      buttonLabel = 'Create Appointment';
+      break;
+    case 'schedule':
+      buttonLabel = 'Schedule Appointment';
+    default:
+      break;
   }
 
   return (
@@ -133,7 +149,12 @@ const AppointmentForm= ({
         )}
 
       
-      <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+      <SubmitButton 
+        isLoading={isLoading} 
+        className={`${type === 'cancel' ? 'shad-danger-btn' : 'shad-primary-btn'} w-full`}
+      >
+        {buttonLabel}
+      </SubmitButton>
       </form>
     </Form>
   )
