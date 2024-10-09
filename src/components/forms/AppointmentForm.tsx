@@ -93,7 +93,43 @@ const AppointmentForm= ({
               </SelectItem>
             ))}
           </CustomFormField>    
-            </>
+          <CustomFormField
+            fieldType={FormFieldType.DATE_PICKER}
+            control={form.control}
+            name="schedule"
+            label="Expected appointment date"
+            showTimeSelect
+            dateFormat="MM/dd/yyyy - h:mm aa"
+          />
+
+          <div className="flex flex-col gap-6">
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="reason"
+              label="Reason for appointment"
+              placeholder="Enter reason for appointment"
+            />
+
+            <CustomFormField
+              fieldType={FormFieldType.TEXTAREA}
+              control={form.control}
+              name="notes"
+              label="Notes"
+              placeholder="Enter notes"
+            />
+          </div>
+          </>
+        )}
+
+        {type === "cancel" && (
+          <CustomFormField
+            fieldType={FormFieldType.TEXTAREA}
+            control={form.control}
+            name="cancellationReason"
+            label="Reason for cancellation"
+            placeholder="Enter reason for cancelling appointment"
+          />
         )}
 
       
