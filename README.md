@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a Patient Management System designed to streamline how patients book appointments at local clinics and hospitals to combat long queues.
 
 ## Getting Started
 
