@@ -2,7 +2,11 @@ This is a Patient Management System designed to streamline how patients book app
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+```
+npm install
+```
+run the development server:
 
 ```bash
 npm run dev
